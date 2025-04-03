@@ -1,0 +1,10 @@
+---
+# this playbook will stop ubuntu instances
+# u need inventory file as u need to ssh
+- hosts: all 
+  become: true
+  tasks:
+    - name: stop instances
+      ansible.builtin.command: /sbin/shutdown -t now
+      when:
+        ansible_facts['os_family']=="Debian"

@@ -1,0 +1,25 @@
+---
+# this playbook creates 2 ubuntu instances and 1 aws linux instance
+# install aws galaxy,boto3 and secure keys then run the playbook
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: start an instance with a public IP address
+      amazon.aws.ec2_instance: 
+        name: "{{ item.name }}"
+        key_name: "key"
+      # vpc_subnet_id: subnet-5ca1ab1e
+        instance_type: t2.micro
+        security_group: default
+        region: ap-south-1
+        aws_access_key: "{{ec2_access_key}}"  # From vault as defined
+        aws_secret_key: "{{ec2_secret_key}}"  # From vault as defined      
+        network_interfaces:
+          - assign_public_ip: true
+        image_id: "{{ item.id }}"
+        tags:
+          Environment: "{{ item.name }}"
+      loop:
+        - { name: "mn-1", id: "ami-002f6e91abff6eb96" }
+        - { name: "mn-1", id: "ami-0e35ddab05955cf57" }
+        - { name: "mn-2", id: "ami-0e35ddab05955cf57" }
